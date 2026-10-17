@@ -13,7 +13,7 @@ class Users(Base):
     lastname = Column(String)
     phone_number = Column(String)
     hash_password = Column(String)
-    role = Column(String)
+    role = Column(String, default="customer")
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now)
 
@@ -24,7 +24,8 @@ class Products(Base):
     title = Column(String)
     description = Column(String)
     price = Column(Integer)
-    is_available = Column(Boolean, default=True)
+    total_available = Column(Integer)
+    Total_Sold = Column(Integer, default=0)
 
 
 class Orders(Base):
@@ -35,6 +36,7 @@ class Orders(Base):
     customer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     customer_phone = Column(String) 
     bill = Column(Float)
+    is_completed = Column(Boolean, default=False)
 
 class PasswordResetOtp(Base):
     __tablename__ = "password_reset_otp"

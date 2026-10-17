@@ -47,7 +47,6 @@ class CreateUsers(BaseModel):
     password: str 
     phone_number: str
     img_url: Optional[str] = None
-    role: Literal["admin", "customer"] = "customer"
 
 class UpdatePassword(BaseModel):
     current_password: str
@@ -120,7 +119,6 @@ def createuser(db: db_dependency, new_user: CreateUsers):
         lastname = new_user.lastname,
         hash_password = bcrypt_context.hash(new_user.password),
         is_active = True,
-        role = new_user.role,
         phone_number = new_user.phone_number,
         img_url = new_user.img_url
     )
