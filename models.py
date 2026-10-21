@@ -37,6 +37,7 @@ class Orders(Base):
     customer_phone = Column(String) 
     bill = Column(Float)
     is_completed = Column(Boolean, default=False)
+    order_at = Column(DateTime, default=datetime.now())
 
 class PasswordResetOtp(Base):
     __tablename__ = "password_reset_otp"
