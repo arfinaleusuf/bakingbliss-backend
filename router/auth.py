@@ -110,6 +110,26 @@ def login_user(db: db_dependency,form_data: Annotated[OAuth2PasswordRequestForm,
 
 user_dependency = Annotated[dict,Depends(get_current_user)]
 
+@router.get("/user")
+def userInfo(db: db_dependency, user:user_dependency):
+    current_user = db.query(Users).filter(Users.id == user.get("id")).first()
+    if current_user is None:
+        raise HTTPException(status_code=404, detail="User Not Found")
+    return{
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "firstname": current_user.firstname,
+        "lastname": current_user.lastname,
+        "phone_number": current_user.phone_number,
+        "img_url": current_user.img_url,
+        "role": current_user.role,
+        "is_active": current_user.is_active,
+        "created_at": (
+        current_user.created_at.isoformat() if current_user.created_at else None
+    ),
+    }
+
 @router.post('/createuser')
 def createuser(db: db_dependency, new_user: CreateUsers):
     user_model = Users(
@@ -121,6 +141,24 @@ def createuser(db: db_dependency, new_user: CreateUsers):
         is_active = True,
         phone_number = new_user.phone_number,
         img_url = new_user.img_url
+    )
+    db.add(user_model)
+    db.commit()
+
+    return JSONResponse(status_code=201, content={'messege': 'User added Successfully'})
+
+@router.post('/createadmin')
+def create_admin(db: db_dependency, new_user: CreateUsers):
+    user_model = Users(
+        email = new_user.email,
+        username = new_user.username,
+        firstname = new_user.firstname,
+        lastname = new_user.lastname,
+        hash_password = bcrypt_context.hash(new_user.password),
+        is_active = True,
+        phone_number = new_user.phone_number,
+        img_url = new_user.img_url,
+        role = "admin"
     )
     db.add(user_model)
     db.commit()
