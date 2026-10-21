@@ -48,6 +48,15 @@ class CreateUsers(BaseModel):
     phone_number: str
     img_url: Optional[str] = None
 
+class UpdateUser(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    phone_number: Optional[str] = None
+    img_url: Optional[str] = None
+    is_active: Optional[bool] = None
+
 class UpdatePassword(BaseModel):
     current_password: str
     new_password: str
@@ -146,6 +155,25 @@ def createuser(db: db_dependency, new_user: CreateUsers):
     db.commit()
 
     return JSONResponse(status_code=201, content={'messege': 'User added Successfully'})
+
+@router.put("/update_user/{user_id}")
+def update_user(db: db_dependency,user: user_dependency,update: UpdateUser,user_id: int):
+    if user is None:
+        raise HTTPException(status_code=401,detail="User is unauthenticated")
+
+    user_info = db.query(Users).filter(Users.id == user_id).first()
+    if user_info is None:
+        raise HTTPException(status_code=404,detail="User not found")
+
+    update_model = update.model_dump(exclude_unset=True)
+
+    for key, value in update_model.items():
+        setattr(user_info, key, value)
+
+    db.commit()
+    db.refresh(user_info)
+
+    return JSONResponse(status_code=200,content={"message": "User updated successfully"})
 
 @router.post('/createadmin')
 def create_admin(db: db_dependency, new_user: CreateUsers):
