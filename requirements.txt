@@ -1,5 +1,7 @@
 fastapi
 uvicorn
+fastapi
+uvicorn
 SQLAlchemy
 psycopg2-binary
 PyMySQL
@@ -20,4 +22,3 @@ brevo-python
 sib-api-v3-sdk
 python-dotenv
 fastapi-mail
-psycopg[binary]
